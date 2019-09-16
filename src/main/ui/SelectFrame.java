@@ -1,9 +1,9 @@
 
-package edu.touro.mco152.bm.ui;
+package main.ui;
 
 import java.io.File;
 
-import edu.touro.mco152.bm.App;
+import main.App;
 
 /**
  *

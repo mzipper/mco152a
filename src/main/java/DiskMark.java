@@ -27,7 +27,7 @@ public class DiskMark {
     public String toString() {
         return "Mark("+type+"): "+getMarkNum()+" bwMbSec: "+getBwMbSecAsString()+" avg: "+getAvgAsString();
     }
-    W
+
     String getBwMbSecAsString() {
         return df.format(getBwMbSec());
     }
@@ -39,7 +39,11 @@ public class DiskMark {
     String getMaxAsString() {
         return df.format(getCumMax());
     }
-    
+
+    /**
+     * This message returns the average as a string
+     * @return the average as a string
+     */
     String getAvgAsString() {
         return df.format(getCumAvg());
     }
@@ -52,6 +56,10 @@ public class DiskMark {
 		this.markNum = markNum;
 	}
 
+    /**
+     * This method returns 'Bwmb' in seconds
+     * @return bwMB as a double  yakov epstein
+     */
 	public double getBwMbSec() {
 		return bwMbSec;
 	}

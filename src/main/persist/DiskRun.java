@@ -1,5 +1,5 @@
 
-package edu.touro.mco152.bm.persist;
+package main.persist;
 
 import java.io.Serializable;
 import java.text.DateFormat;

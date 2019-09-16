@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.touro.mco152.bm.ui;
+package main.ui;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.table.DefaultTableModel;
 
-import edu.touro.mco152.bm.persist.DiskRun;
+import main.persist.DiskRun;
 
 /**
  *
