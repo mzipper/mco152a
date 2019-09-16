@@ -4,7 +4,8 @@ package edu.touro.mco152.bm;
 import java.text.DecimalFormat;
 
 /**
- *
+ * DiskMark is the data for the local disk drive.
+ * It measures a drive's read, write, or read-write speed.
  */
 public class DiskMark {
     

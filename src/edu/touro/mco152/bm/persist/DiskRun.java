@@ -20,7 +20,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- *
+ * Database that stores info regarding previous benchmarks.
+ * Each run is saved using the Serializable class
+ * which DiskRun implements.
  */
 @Entity
 @Table(name="DiskRun")

@@ -29,8 +29,9 @@ import edu.touro.mco152.bm.persist.EM;
 import edu.touro.mco152.bm.ui.Gui;
 
 /**
- * Thread running the disk benchmarking. only one of these threads can run at
- * once.
+ * Thread running the disk benchmarking.
+ * Either tests the read or write speed or a local drive.
+ * Only one of these threads can run at once.
  */
 public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
     
