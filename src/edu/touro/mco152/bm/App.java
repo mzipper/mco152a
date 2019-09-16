@@ -314,13 +314,13 @@ public class App {
     
     public static void updateMetrics(DiskMark mark) {
         if (mark.type==DiskMark.MarkType.WRITE) {
-            if (wMax==-1 || wMax < mark.getBwMbSec()) {
+            if (wMax<0 || wMax < mark.getBwMbSec()) {
                 wMax = mark.getBwMbSec();
             }
-            if (wMin==-1 || wMin > mark.getBwMbSec()) {
+            if (wMin<0 || wMin > mark.getBwMbSec()) {
                 wMin = mark.getBwMbSec();
             }
-            if (wAvg==-1) {
+            if (wAvg<0) {
                 wAvg = mark.getBwMbSec();
             } else {
                 int n = mark.getMarkNum();
@@ -330,13 +330,13 @@ public class App {
             mark.setCumMax(wMax);
             mark.setCumMin(wMin);
         } else {
-            if (rMax==-1 || rMax < mark.getBwMbSec()) {
+            if (rMax<0 || rMax < mark.getBwMbSec()) {
                 rMax = mark.getBwMbSec();
             }
-            if (rMin==-1 || rMin > mark.getBwMbSec()) {
+            if (rMin<0 || rMin > mark.getBwMbSec()) {
                 rMin = mark.getBwMbSec();
             }
-            if (rAvg==-1) {
+            if (rAvg<0) {
                 rAvg = mark.getBwMbSec();
             } else {
                 int n = mark.getMarkNum();

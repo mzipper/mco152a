@@ -64,7 +64,7 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
         
         Gui.updateLegend();
         
-        if (App.autoReset == true) {
+        if (App.autoReset) {
             App.resetTestData();
             Gui.resetTestData();
         }
@@ -84,12 +84,12 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
             Gui.chartPanel.getChart().getTitle().setVisible(true);
             Gui.chartPanel.getChart().getTitle().setText(run.getDiskInfo());
             
-            if (App.multiFile == false) {
+            if (!App.multiFile) {
                 testFile = new File(dataDir.getAbsolutePath()+File.separator+"testdata.jdm");
             }            
             for (int m=startFileNum; m<startFileNum+App.numOfMarks && !isCancelled(); m++) {
                 
-                if (App.multiFile == true) {
+                if (App.multiFile) {
                     testFile = new File(dataDir.getAbsolutePath()
                             + File.separator+"testdata"+m+".jdm");
                 }   
@@ -175,7 +175,7 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
             
             for (int m=startFileNum; m<startFileNum+App.numOfMarks && !isCancelled(); m++) {
                 
-                if (App.multiFile == true) {
+                if (App.multiFile) {
                     testFile = new File(dataDir.getAbsolutePath()
                             + File.separator+"testdata"+m+".jdm");
                 }
