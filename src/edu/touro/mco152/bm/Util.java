@@ -23,8 +23,8 @@ public class Util {
     
     /**
      * Deletes the Directory and all files within
-     * @param path
-     * @return 
+     * @param path the path of the directory
+     * @return the deleted path
      */
     static public boolean deleteDirectory(File path) {
         if (path.exists()) {

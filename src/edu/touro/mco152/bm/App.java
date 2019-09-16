@@ -95,7 +95,7 @@ public class App {
     
     /**
      * Get the version from the build properties. Defaults to 0.0 if not found.
-     * @return 
+     * @return version number of app
      */
     public static String getVersion() {
         Properties bp = new Properties();
@@ -112,7 +112,8 @@ public class App {
     }
     
     /**
-     * Initialize the GUI Application.
+     * Initialize the GUI Application, including the
+     * mainFrame, SelectFrame, and progressBar.
      */
     public static void init() {
         Gui.mainFrame = new MainFrame();
