@@ -31,7 +31,8 @@ public class DiskMark {
     String getBwMbSecAsString() {
         return df.format(getBwMbSec());
     }
-    
+
+
     String getMinAsString() {
         return df.format(getCumMin());
     }
@@ -59,15 +60,26 @@ public class DiskMark {
 	public void setBwMbSec(double bwMbSec) {
 		this.bwMbSec = bwMbSec;
 	}
-
 	public double getCumAvg() {
 		return cumAvg;
 	}
 
+    /**
+     *
+     * this is a test to see if i can generate java doc for setCumAvg
+     * the method sets the cum average :)(Steven G).
+     * @param cumAvg is the number you want to set cumAvg too
+     * @author Steven G
+     *
+     */
 	public void setCumAvg(double cumAvg) {
 		this.cumAvg = cumAvg;
 	}
-
+    /**
+     * this is a test to see if i can generate java doc for getCumMin
+     *the method returns the cum min :)(Steven G).
+     * @author Steven G
+     */
 	public double getCumMin() {
 		return cumMin;
 	}
