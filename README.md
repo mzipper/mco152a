@@ -28,6 +28,8 @@ The purpose of this program is to compute and provide some performance informati
 
 For MCO152 class, this repo's master branch is updated to this level:
 
+level 5 - Add JUnit test - brute force headless-test of DiskWorker
+
 level 4 - Gradle support
 
 level 3 - JavaDoc Examples
