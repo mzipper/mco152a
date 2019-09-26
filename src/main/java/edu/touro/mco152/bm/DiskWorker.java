@@ -29,19 +29,41 @@ import edu.touro.mco152.bm.persist.EM;
 import edu.touro.mco152.bm.ui.Gui;
 
 /**
- * Thread running the disk benchmarking. only one of these threads can run at
- * once.
+ * Run the disk benchmarking as a Swing-compliant thread (only one of these threads can run at
+ * once.) Cooperates with Swing to provide and make use of interim and final progress and
+ * information, which is also recorded as needed to persistence store, and log.
+ *
+ * Depends on static values that describe the benchmark to be done having been set in App and Gui classes.
+ * The DiskRun class is used to keep track of and persist info about each benchmark at a higher level (a run),
+ * while the DiskMark class described each iteration's result, which is displayed by the UI as the benchmark run
+ * progresses.
+ *
+ * This class only knows how to do 'read' or 'write' disk benchmarks. It is instantiated by the
+ * startBenchmark() method.
+ *
+ * To be Swing compliant this class extends SwingWorker and declares that its final return (when
+ * doInBackground() is finished) is of type Boolean, and declares that intermediate results are communicated to
+ * Swing using an instance of the DiskMark class.
  */
 public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
     
     @Override
     protected Boolean doInBackground() throws Exception {
+        /**
+         * We 'got here' because: a) End-user clicked 'Start' on the benchmark UI, which triggered the
+         * start-benchmark event associated with the App::startBenchmark() method.  b) startBenchmark() then
+         * instantiated a DiskWorker, and called its (super class's) execute() method, causing Swing to eventually
+         * call our doInBackground() method.
+         */
         
         System.out.println("*** starting new worker thread");
         msg("Running readTest "+App.readTest+"   writeTest "+App.writeTest);
         msg("num files: "+App.numOfMarks+", num blks: "+App.numOfBlocks
            +", blk size (kb): "+App.blockSizeKb+", blockSequence: "+App.blockSequence);
         
+        /**
+         * init local vars that keep track of benchmarks, and a large read/write buffer
+         */
         int wUnitsComplete = 0,
             rUnitsComplete = 0,
             unitsComplete;
@@ -59,18 +81,24 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
             }
         }
    
-        DiskMark wMark, rMark;
+        DiskMark wMark, rMark;  // declare vars that will point to objects used to pass progress to UI
         
-        Gui.updateLegend();
+        Gui.updateLegend();     // init chart legend info
         
         if (App.autoReset == true) {
+            // config property says to clear info before each benchmark
             App.resetTestData();
             Gui.resetTestData();
         }
         
         int startFileNum = App.nextMarkNumber;
         
+        /**
+         * The GUI allows either a write, read, or both types of BMs to be done. They are done serially.
+         */
+
         if(App.writeTest) {
+            // Init what we know about the Run's parameters
             DiskRun run = new DiskRun(DiskRun.IOMode.WRITE, App.blockSequence);
             run.setNumMarks(App.numOfMarks);
             run.setNumBlocks(App.numOfBlocks);
@@ -78,21 +106,29 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
             run.setTxSize(App.targetTxSizeKb());
             run.setDiskInfo(Util.getDiskInfo(dataDir));
             
+            // Tell logger and GUI to display what we know so far about the Run
             msg("disk info: ("+ run.getDiskInfo()+")");
             
             Gui.chartPanel.getChart().getTitle().setVisible(true);
             Gui.chartPanel.getChart().getTitle().setText(run.getDiskInfo());
             
+            // Create a test data file using the default file system and config-specified location
             if (App.multiFile == false) {
                 testFile = new File(dataDir.getAbsolutePath()+File.separator+"testdata.jdm");
             }            
+
+            /**
+             * Begin an outer loop for specified duration (number of 'marks') of benchmark,
+             * that keeps writing data (in its own loop - for specified # of blocks). Each 'Mark' is timed
+             * and is reported to the GUI for display as each Mark completes.
+             */
             for (int m=startFileNum; m<startFileNum+App.numOfMarks && !isCancelled(); m++) {
                 
                 if (App.multiFile == true) {
                     testFile = new File(dataDir.getAbsolutePath()
                             + File.separator+"testdata"+m+".jdm");
                 }   
-                wMark = new DiskMark(WRITE);
+                wMark = new DiskMark(WRITE); // starting to keep track of a new Mark
                 wMark.setMarkNum(m);
                 long startTime = System.nanoTime();
                 long totalBytesWrittenInMark = 0;
@@ -100,6 +136,9 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
                 String mode = "rw";
                 if (App.writeSyncEnable) { mode = "rwd"; }
                 
+                /**
+                 * Except for the call to setProgress(), this try-block can be treated as a black box.
+                 */
                 try {
                     try (RandomAccessFile rAccFile = new RandomAccessFile(testFile,mode)) {
                         for (int b=0; b<numOfBlocks; b++) {
@@ -114,7 +153,11 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
                             wUnitsComplete++;
                             unitsComplete = rUnitsComplete + wUnitsComplete;
                             percentComplete = (float)unitsComplete/(float)unitsTotal * 100f;
-                            setProgress((int)percentComplete);
+
+                            /**
+                             * Report to GUI what percentage level of Entire BM (#Marks * #Blocks) is done.
+                             */
+                            setProgress((int)percentComplete);  // this is a SwingWorker method
                         }
                     }
                 } catch (FileNotFoundException ex) {
@@ -122,6 +165,9 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
                 } catch (IOException ex) {
                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                /**
+                 * Compute duration, throughput of this Mark's step of BM
+                 */
                 long endTime = System.nanoTime();
                 long elapsedTimeNs = endTime - startTime;
                 double sec = (double)elapsedTimeNs / (double)1000000000;
@@ -131,14 +177,23 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
                         + "("+Util.displayString(mbWritten)+ "MB written in "
                         + Util.displayString(sec)+" sec)");
                 App.updateMetrics(wMark);
-                publish(wMark);
                 
+                /**
+                 * Let the GUI know the interim result described by the current Mark
+                 */
+                publish(wMark); // this is a SwingWorker method - Watch Professor Cohen's video
+
+                // Keep track of statistics to be displayed and persisted after all Marks are done.
                 run.setRunMax(wMark.getCumMax());
                 run.setRunMin(wMark.getCumMin());
                 run.setRunAvg(wMark.getCumAvg());
                 run.setEndTime(new Date());
-            }
             
+            } // END outer loop for specified duration (number of 'marks')
+
+            /**
+             * Persist info about the Write BM Run (e.g. into Derby Database) and add it to a GUI panel
+             */
             EntityManager em = EM.getEntityManager();
             em.getTransaction().begin();
             em.persist(run);
@@ -148,6 +203,11 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
         }
         
         
+        /**
+         * Most benchmarking systems will try to do some cleanup in between 2 benchmark operations to
+         * make it more 'fair'. For example a networking benchmark might close and re-open sockets,
+         * a memory benchmark might clear or invalidate the Op Systems TLB or other caches, etc.
+         */
         // try renaming all files to clear catch
         if (App.readTest && App.writeTest && !isCancelled()) {
             JOptionPane.showMessageDialog(Gui.mainFrame, 
@@ -159,6 +219,7 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
                 "Clear Disk Cache Now",JOptionPane.PLAIN_MESSAGE);
         }
         
+        // Same as above, just for Read operations instead of Writes.
         if (App.readTest) {
             DiskRun run = new DiskRun(DiskRun.IOMode.READ, App.blockSequence);
             run.setNumMarks(App.numOfMarks);
@@ -234,6 +295,10 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
     
     @Override
     protected void process(List<DiskMark> markList) {
+        /**
+         * We are passed a list of one or more DiskMark objects that our thread has previously
+         * published to Swing. Watch Professor Cohen's video.
+         */
         markList.stream().forEach((m) -> {
             if (m.type==DiskMark.MarkType.WRITE) {
                 Gui.addWriteMark(m);
