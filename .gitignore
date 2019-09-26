@@ -1,7 +1,23 @@
+# eclipse items
 .project
 .settings
 .classpath
+
+IntelliJ Items
+.idea/
+mco152a.iml
+
+# build artifacts
+.gradle/
+### temporarily allow this for student homeworks:   build
 bin/
+
+# program execution artifacts
 jDiskMarkData/
 doc/
+ 
+#MAC junk
+.DS_Store
 
+# Gradle stuff we dont use yet
+gradle/wrapper
