@@ -19,3 +19,5 @@ doc/
 #MAC junk
 .DS_Store
 
+# Gradle stuff we dont use yet
+gradle/wrapper
