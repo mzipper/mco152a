@@ -28,6 +28,8 @@ The purpose of this program is to compute and provide some performance informati
 
 For MCO152 class, this repo's master branch is updated to this level:
 
+level 3 - JavaDoc Examples
+
 level 2 - assorted updates to README.
 
 level 1 - Cleaned up some warnings and added sample Javadoc (branches cleanWarings, docExamples), added meaningful gitignore.
