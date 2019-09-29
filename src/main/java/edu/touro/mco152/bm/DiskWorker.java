@@ -91,6 +91,14 @@ public class DiskWorker extends SwingWorker <Boolean, DiskMark> {
                 if (App.multiFile == true) {
                     testFile = new File(dataDir.getAbsolutePath()
                             + File.separator+"testdata"+m+".jdm");
+
+
+
+
+
+
+
+
                 }   
                 wMark = new DiskMark(WRITE);
                 wMark.setMarkNum(m);
