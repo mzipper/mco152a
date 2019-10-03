@@ -267,7 +267,7 @@ public class Util {
      *      devicePath = /dev/sda
      *      
      * @param path the file path
-     * @return the device path
+     * @return curDevice the device path
      */
     static public String getDeviceFromPath(Path path) {
         try {
@@ -298,7 +298,7 @@ public class Util {
      * specific Device ie. /dev/sda
      * 
      * @param devicePath path of the device
-     * @return the disk model number
+     * @return line the disk model number
      */
     static public String getDeviceModel(String devicePath) {
         try {
@@ -322,7 +322,7 @@ public class Util {
      * specific Device ie. /dev/sda
      * 
      * @param devicePath path of the device
-     * @return the size of the device
+     * @return line the size of the device (or null)
      */
     static public String getDeviceSize(String devicePath) {
         try {
@@ -340,7 +340,12 @@ public class Util {
         } catch(IOException | InterruptedException e) {}
         return null;
     }
-    
+
+    /**
+     *
+     * @param path
+     * @return curDevice the device (or null)
+     */
     static public String getDeviceFromPathOSX(Path path) {
         try {
             Process p = Runtime.getRuntime().exec("df "+path.toString());
@@ -359,7 +364,12 @@ public class Util {
         } catch(IOException | InterruptedException e) {}
         return null;
     }
-    
+
+    /**
+     *
+     * @param devicePath
+     * @return the device model (or null)
+     */
     static public String getDeviceModelOSX(String devicePath) {
         try {
             String command = "diskutil info "+devicePath;

@@ -21,7 +21,13 @@ import javax.persistence.Persistence;
 public class EM {   //TODO  Come up with a better name (besides EntityManager  :-)  
     
     private static EntityManager em = null;
-    
+
+    /**
+     * Returns an entity manager.
+     * Either the object from the field EntityManager
+     * or creates one if field is null.
+     * @return em the entity manager
+     */
     public static EntityManager getEntityManager() {
         if (em == null) {
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("jDiskMarkPU");
