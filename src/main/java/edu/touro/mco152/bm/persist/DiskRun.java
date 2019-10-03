@@ -20,7 +20,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- *
+ * Class that stores a lot the info related to the
+ * reading and writing of the program.
  */
 @Entity
 @Table(name="DiskRun")

@@ -24,6 +24,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Primary class for global variables.
+ * Has some methods related to setting up some aspects of the GUI.
+ * Contains the main method which launched the GUI (the program).
  */
 public class App {
     
